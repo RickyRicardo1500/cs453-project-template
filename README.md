@@ -159,6 +159,11 @@ npm -v
 > 10.x.x
 ```
 
+### Install TypeScript tooling 
+```shell
+npm install -D typescript ts-node-dev @types/node @types/express
+```
+
 ## 1. Clone the repository
 
 ```shell
