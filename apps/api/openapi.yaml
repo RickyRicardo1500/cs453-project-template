@@ -1,0 +1,235 @@
+openapi: 3.0.3
+info:
+  title: CS553 Project API
+  version: 1.0.0
+  description: This API describes the request and response body for the client and server.
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: Server is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /db-health:
+    get:
+      summary: Database Health check
+      responses:
+        "200":
+          description: Database is running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /tasks: 
+    get:
+      summary: Retrieve list of Tasks
+      responses:
+        "200":
+          description: All tasks returned from the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: array
+                    example:  [{
+                                "id": 1,
+                                "title": "First task",
+                                "status": 1
+                              },
+                              {
+                                "id": 2,
+                                "title": "Second task",
+                                "status": 0
+                              }
+                              ]
+    post:
+      summary: New task
+      responses:
+        "201":
+          description: Creates a new task in the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "title": "New task",
+                                "status": 2
+                              }
+        "400":
+          description: Task creation unsuccesful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "error": "Missing required fields or contains invalid data"
+                              }
+  /tasks/:id
+    get:
+      summary: Retrieve task
+      responses:
+        "200":
+          description: Task returned by id
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "id": 1,
+                                "title": "First task",
+                                "status": 1
+                              }
+        "404":
+          description: Task doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "error": "Task not found"
+                              }
+    patch:
+      summary: Update task
+      responses:
+        "200":
+          description: Update an existing task in the database and return it
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "id": 2
+                                "title": "Second task",
+                                "status": 0
+                              }
+        "400":
+          description: Task update unsuccesful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "error": "Missing required fields or contains invalid data"
+                              }
+        "404":
+          description: Task doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "error": "Task not found"
+                              }
+    delete:
+      summary: Delete a task
+      responses:
+        "204":
+          description: Deleted an existing task in the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example:  "deleted"
+        "404":
+          description: Task doesn't exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    example:  {
+                                "error": "Task not found"
+                              }
+  #
+  # Remember:
+  # - Express routes use :id, such as /tasks/:id.
+  # - OpenAPI paths use {id}, such as /tasks/{id}.
+  #
+  # You may define schemas under components/schemas if you want to avoid
+  # repeating the same object structure many times.
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: keyboard
+        status:
+          type: number
+          example: 10
+        description:
+          type: string
+          example: example description
+        created_at:
+          type: string
+          example: 08:55:34 PM
+        updated_at:
+          type: string
+          example: 08:55:34 PM
+      required: [id, title, status]
+    TaskInput:
+      type: object
+      properties:
+        title:
+          type: string
+          example: task1
+        status:
+          type: number
+          example: 10
+      required: [name, quantity]
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Task not found
+      required: error
