@@ -1,16 +1,8 @@
 import express from "express";
 import { env } from "./config/env";
 import { pool } from "./db/pool";
+import taskRoutes from "./routes/taskRoutes";
 
-function isValidItem(body) { 
-    return (
-      body &&
-      typeof body.title === "string" &&
-      body.title.trim() !== "" &&
-      typeof body.status === "number" &&
-      body.status >= 0
-    );
-}
 
 const app = express();
 
@@ -40,114 +32,16 @@ app.get("/db-health", async (_req, res) => {
 	}
 });
 
-app.get("/tasks", async (_req, res) => {
-	try {
-		const result = await pool.query(
-			`SELECT id,
-                    title,
-                    description,
-                    status,
-                    created_at AS "createdAt",
-                    updated_at AS "updatedAt"
-             FROM tasks
-             ORDER BY id `,
-		);
+app.use("/tasks", taskRoutes);
 
-		res.json(result.rows);
-	} catch (error) {
-		console.error("Failed to fetch tasks:", error);
-		res.status(500).json({
-			status: "error",
-			message: "Failed to fetch tasks",
-		});
-	}
-});
+// app.listen(env.port, () => {
+// 	console.log(`Server running at http://localhost:${env.port}`);
+// });
 
-app.post("/tasks", async (_req, res) => {
-	if (!isValidItem(req.body)) {
-      return res.status(400).json({ error: "Missing required fields or contains invalid data" });
-    }
+if (require.main === module) {
+  app.listen(env.port, () => {
+    console.log(`Server running at http://localhost:${env.port}`);
+  });
+}
 
-    const newItem = {
-      id: nextId++,
-      title: _req.body.title,
-      status: _req.body.status
-    };
-
-    items.push(newItem);
-    res.status(201).json(newItem);
-
-});
-
-app.get("/tasks/:id", async (_req, res) => {
-	try {
-		const result = await pool.query(
-			`SELECT id,
-                    title,
-                    description,
-                    status,
-                    created_at AS "createdAt",
-                    updated_at AS "updatedAt"
-             FROM tasks
-             ORDER BY id `,
-		);
-
-		res.json(result.rows);
-	} catch (error) {
-		console.error("Failed to fetch tasks:", error);
-		res.status(500).json({
-			status: "error",
-			message: "Failed to fetch tasks",
-		});
-	}
-});
-
-app.patch("/tasks/:id", async (_req, res) => {
-	try {
-		const result = await pool.query(
-			`SELECT id,
-                    title,
-                    description,
-                    status,
-                    created_at AS "createdAt",
-                    updated_at AS "updatedAt"
-             FROM tasks
-             ORDER BY id `,
-		);
-
-		res.json(result.rows);
-	} catch (error) {
-		console.error("Failed to fetch tasks:", error);
-		res.status(500).json({
-			status: "error",
-			message: "Failed to fetch tasks",
-		});
-	}
-});
-
-app.delete("/tasks/:id", async (_req, res) => {
-	try {
-		const result = await pool.query(
-			`SELECT id,
-                    title,
-                    description,
-                    status,
-                    created_at AS "createdAt",
-                    updated_at AS "updatedAt"
-             FROM tasks
-             ORDER BY id `,
-		);
-
-		res.json(result.rows);
-	} catch (error) {
-		console.error("Failed to fetch tasks:", error);
-		res.status(500).json({
-			status: "error",
-			message: "Failed to fetch tasks",
-		});
-	}
-});
-
-app.listen(env.port, () => {
-	console.log(`Server running at http://localhost:${env.port}`);
-});
+export default app;

@@ -88,7 +88,7 @@ paths:
                     example:  {
                                 "error": "Missing required fields or contains invalid data"
                               }
-  /tasks/:id
+  /tasks/{id}:
     get:
       summary: Retrieve task
       responses:
@@ -225,7 +225,7 @@ components:
         status:
           type: number
           example: 10
-      required: [name, quantity]
+      required: [title, status]
     ErrorResponse:
       type: object
       properties:
