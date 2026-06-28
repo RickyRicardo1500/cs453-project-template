@@ -12,6 +12,10 @@ src/
 └── db/
     └── pool.ts
 
+Install dependencies
+```bash
+npm install
+```
 
 Run Automated Testing
 
